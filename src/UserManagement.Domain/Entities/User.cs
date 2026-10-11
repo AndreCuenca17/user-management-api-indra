@@ -19,16 +19,19 @@ public class User
     public User(int id, string name, string email, string passwordHash, bool isActive)
     {
         Id = id;
-        SetName(name);
-        SetEmail(email);
+        Name = ValidateName(name);
+        Email = ValidateEmail(email);
         PasswordHash = passwordHash;
         IsActive = isActive;
     }
 
     public void Update(string name, string email, bool isActive)
     {
-        SetName(name);
-        SetEmail(email);
+        var validName = ValidateName(name);
+        var validEmail = ValidateEmail(email);
+
+        Name = validName;
+        Email = validEmail;
         IsActive = isActive;
     }
 
@@ -38,19 +41,19 @@ public class User
              .Distinct()
              .ToList();
 
-    private void SetName(string name)
+    private static string ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new DomainValidationException("El nombre es obligatorio.");
 
-        Name = name.Trim();
+        return name.Trim();
     }
 
-    private void SetEmail(string email)
+    private static string ValidateEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email) || !EmailPattern.IsMatch(email))
             throw new DomainValidationException("El formato del email no es válido.");
 
-        Email = email.Trim().ToLowerInvariant();
+        return email.Trim().ToLowerInvariant();
     }
 }
