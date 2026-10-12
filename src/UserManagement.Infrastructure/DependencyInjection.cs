@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using UserManagement.Application.Ports.Output;
 using UserManagement.Infrastructure.Persistence;
 using UserManagement.Infrastructure.Persistence.Repositories;
+using UserManagement.Infrastructure.Security;
 
 namespace UserManagement.Infrastructure;
 
@@ -20,6 +21,10 @@ public static class DependencyInjection
             options.UseMySql(connectionString, new MySqlServerVersion(Version.Parse(serverVersion))));
 
         services.AddScoped<IUserRepository, EfUserRepository>();
+
+        services.AddSingleton(JwtOptions.FromConfiguration(configuration));
+        services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
+        services.AddSingleton<ITokenGenerator, JwtTokenGenerator>();
 
         return services;
     }
