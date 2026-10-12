@@ -1,0 +1,84 @@
+@baseUrl = http://localhost:5155/api/v1
+
+### Obtener token (admin)
+POST {{baseUrl}}/auth/token
+Content-Type: application/json
+
+{
+  "email": "admin@demo.com",
+  "password": "Admin123!"
+}
+
+> {% client.global.set("adminToken", response.body.accessToken); %}
+
+### Obtener token (consulta)
+POST {{baseUrl}}/auth/token
+Content-Type: application/json
+
+{
+  "email": "consulta@demo.com",
+  "password": "Consulta123!"
+}
+
+> {% client.global.set("consultaToken", response.body.accessToken); %}
+
+### Usuario inactivo no obtiene token (401)
+POST {{baseUrl}}/auth/token
+Content-Type: application/json
+
+{
+  "email": "inactivo@demo.com",
+  "password": "Inactivo123!"
+}
+
+### Listar usuarios paginados (200)
+GET {{baseUrl}}/users?page=1&pageSize=10
+Authorization: Bearer {{consultaToken}}
+
+### Paginación fuera de rango (400)
+GET {{baseUrl}}/users?page=0&pageSize=500
+Authorization: Bearer {{consultaToken}}
+
+### Actualizar usuario con permiso users.update (200)
+PUT {{baseUrl}}/users/2
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Consulta Demo",
+  "email": "consulta@demo.com",
+  "isActive": true
+}
+
+### Actualizar sin permiso users.update (403)
+PUT {{baseUrl}}/users/2
+Authorization: Bearer {{consultaToken}}
+Content-Type: application/json
+
+{
+  "name": "Consulta Demo",
+  "email": "consulta@demo.com",
+  "isActive": true
+}
+
+### Email ya usado por otro usuario (409)
+PUT {{baseUrl}}/users/2
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Consulta Demo",
+  "email": "admin@demo.com",
+  "isActive": true
+}
+
+### Usuario inexistente (404)
+PUT {{baseUrl}}/users/999
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Nadie",
+  "email": "nadie@demo.com",
+  "isActive": true
+}

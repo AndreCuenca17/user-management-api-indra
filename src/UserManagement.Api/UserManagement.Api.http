@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:5155/api/v1
 
-### Obtener token (admin)
+# @name loginAdmin
 POST {{baseUrl}}/auth/token
 Content-Type: application/json
 
@@ -9,9 +9,9 @@ Content-Type: application/json
   "password": "Admin123!"
 }
 
-> {% client.global.set("adminToken", response.body.accessToken); %}
+###
 
-### Obtener token (consulta)
+# @name loginConsulta
 POST {{baseUrl}}/auth/token
 Content-Type: application/json
 
@@ -20,9 +20,8 @@ Content-Type: application/json
   "password": "Consulta123!"
 }
 
-> {% client.global.set("consultaToken", response.body.accessToken); %}
+###
 
-### Usuario inactivo no obtiene token (401)
 POST {{baseUrl}}/auth/token
 Content-Type: application/json
 
@@ -31,17 +30,20 @@ Content-Type: application/json
   "password": "Inactivo123!"
 }
 
-### Listar usuarios paginados (200)
+###
+
 GET {{baseUrl}}/users?page=1&pageSize=10
-Authorization: Bearer {{consultaToken}}
+Authorization: Bearer {{loginConsulta.response.body.$.accessToken}}
 
-### Paginación fuera de rango (400)
+###
+
 GET {{baseUrl}}/users?page=0&pageSize=500
-Authorization: Bearer {{consultaToken}}
+Authorization: Bearer {{loginConsulta.response.body.$.accessToken}}
 
-### Actualizar usuario con permiso users.update (200)
+###
+
 PUT {{baseUrl}}/users/2
-Authorization: Bearer {{adminToken}}
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
 Content-Type: application/json
 
 {
@@ -50,9 +52,10 @@ Content-Type: application/json
   "isActive": true
 }
 
-### Actualizar sin permiso users.update (403)
+###
+
 PUT {{baseUrl}}/users/2
-Authorization: Bearer {{consultaToken}}
+Authorization: Bearer {{loginConsulta.response.body.$.accessToken}}
 Content-Type: application/json
 
 {
@@ -61,9 +64,10 @@ Content-Type: application/json
   "isActive": true
 }
 
-### Email ya usado por otro usuario (409)
+###
+
 PUT {{baseUrl}}/users/2
-Authorization: Bearer {{adminToken}}
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
 Content-Type: application/json
 
 {
@@ -72,9 +76,10 @@ Content-Type: application/json
   "isActive": true
 }
 
-### Usuario inexistente (404)
+###
+
 PUT {{baseUrl}}/users/999
-Authorization: Bearer {{adminToken}}
+Authorization: Bearer {{loginAdmin.response.body.$.accessToken}}
 Content-Type: application/json
 
 {

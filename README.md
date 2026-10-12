@@ -57,7 +57,14 @@ La cadena de conexión se lee de `ConnectionStrings:Default` en `src/UserManagem
 | GET | `/api/v1/users?page=1&pageSize=10` | JWT válido |
 | PUT | `/api/v1/users/{id}` | JWT válido + permiso `users.update` |
 
-Colección de peticiones: `src/UserManagement.Api/UserManagement.Api.http` (incluye un caso por cada código de respuesta: 200, 400, 401, 403, 404 y 409).
+Colección de peticiones, con un caso por cada código de respuesta (200, 400, 401, 403, 404 y 409). Hay una versión por cliente porque cada uno captura el token con una sintaxis distinta:
+
+| Cliente | Archivo |
+|---------|---------|
+| Visual Studio 2022 (17.12+) / VS Code (REST Client) | `src/UserManagement.Api/UserManagement.Api.http` |
+| Rider / IntelliJ | `src/UserManagement.Api/UserManagement.Api.jetbrains.http` |
+
+Ejecutar primero las dos peticiones de login: el resto toma el token de sus respuestas.
 
 Los errores se devuelven en formato ProblemDetails (RFC 9110).
 
