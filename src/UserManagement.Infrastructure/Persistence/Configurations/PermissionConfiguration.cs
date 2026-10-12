@@ -12,5 +12,9 @@ public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
         builder.HasKey(permission => permission.Id);
         builder.Property(permission => permission.Name).HasMaxLength(100).IsRequired();
         builder.HasIndex(permission => permission.Name).IsUnique();
+
+        builder.HasData(
+            new { Id = SeedData.UsersReadPermissionId, Name = "users.read" },
+            new { Id = SeedData.UsersUpdatePermissionId, Name = "users.update" });
     }
 }

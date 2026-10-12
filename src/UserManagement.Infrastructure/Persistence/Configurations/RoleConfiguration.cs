@@ -13,12 +13,23 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         builder.Property(role => role.Name).HasMaxLength(50).IsRequired();
         builder.HasIndex(role => role.Name).IsUnique();
 
+        builder.HasData(
+            new { Id = SeedData.AdministratorRoleId, Name = "Administrador" },
+            new { Id = SeedData.ConsultaRoleId, Name = "Consulta" });
+
         builder.HasMany(role => role.Permissions)
             .WithMany()
             .UsingEntity<Dictionary<string, object>>(
                 "role_permissions",
                 right => right.HasOne<Permission>().WithMany().HasForeignKey("PermissionId"),
                 left => left.HasOne<Role>().WithMany().HasForeignKey("RoleId"),
-                join => join.HasKey("RoleId", "PermissionId"));
+                join =>
+                {
+                    join.HasKey("RoleId", "PermissionId");
+                    join.HasData(
+                        new { RoleId = SeedData.AdministratorRoleId, PermissionId = SeedData.UsersReadPermissionId },
+                        new { RoleId = SeedData.AdministratorRoleId, PermissionId = SeedData.UsersUpdatePermissionId },
+                        new { RoleId = SeedData.ConsultaRoleId, PermissionId = SeedData.UsersReadPermissionId });
+                });
     }
 }
