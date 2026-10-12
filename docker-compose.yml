@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8.4.11
+    container_name: usermanagement-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_dev_password
+      MYSQL_DATABASE: user_management
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_dev_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_dev_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql-data:
